@@ -1,0 +1,72 @@
+#include <MBED_RPi_Pico_TimerInterrupt.h>
+#include <MBED_RPi_Pico_TimerInterrupt.hpp>
+#include <MBED_RPi_Pico_ISR_Timer.h>
+#include <MBED_RPi_Pico_ISR_Timer.hpp>
+
+
+
+
+int G_PIN = 14;
+int B_PIN = 15;
+int Pir = 16;
+
+volatile int greenstate = LOW;
+volatile int bluestate = LOW;
+int pir_status = LOW;
+
+volatile int tot_count = 0;    //toccata sia dal loop che dall'interrupt
+
+int time_to_wait = 30000;
+
+MBED_RPI_PICO_Timer ITimer1(1);
+
+void blinkled(uint alarm_num){
+    TIMER_ISR_START(alarm_num);
+    digitalWrite(G_PIN,greenstate);
+    greenstate = !greenstate;
+    TIMER_ISR_END(alarm_num);
+}
+
+
+
+void check_presense(){
+  
+  
+  tot_count = tot_count +1;
+  Serial.println("Person detected");
+
+  pir_status = Serial.read(Pir);
+
+  digitalWrite(G_PIN,pir_status);
+  
+}
+
+void setup() {
+  // put your setup code here, to run once:
+  pinMode(G_PIN,OUTPUT);
+  pinMode(B_PIN,OUTPUT);
+  pinMode (Pir,INPUT);
+
+  attachInterrupt(digitalPinToInterrupt(Pir),check_presense,CHANGE); //RISING, FALLING, CHANGE
+
+  
+
+  //ITimer1.setInterval(g_halfperiod*1000,blinkled);
+  Serial.begin(9600);
+  while(!Serial);
+  Serial.println("Listening for commands...");
+
+
+  
+
+}
+
+void loop() 
+{
+
+  Serial.println("Person: ");
+  Serial.print(tot_count);
+  delay(time_to_wait);
+ 
+
+}
