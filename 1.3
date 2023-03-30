@@ -33,9 +33,10 @@ void check_presense(){
   
   
   tot_count = tot_count +1;
-  Serial.println("Person detected");
+  //Serial.println("Person detected");
+  //Serial.println(pir_status);
 
-  pir_status = Serial.read(Pir);
+  pir_status = digitalRead(Pir);
 
   digitalWrite(G_PIN,pir_status);
   
@@ -57,15 +58,19 @@ void setup() {
   Serial.println("Listening for commands...");
 
 
-  
+ 
 
 }
 
 void loop() 
 {
 
-  Serial.println("Number of people: ");
+  //pir_status = digitalRead(Pir);
+  //Serial.println(pir_status);
+  Serial.print("Number of people:");
   Serial.print(tot_count);
+  Serial.println();
+
   delay(time_to_wait);
  
 
